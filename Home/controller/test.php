@@ -2,6 +2,11 @@
 namespace Ld\index\controller;
 class test {
 	public function en() {
-		echo 'b';
+	  $r =  simplexml_load_file(FRAMEWORK_DIR.'../Home/conf/web.xml');
+	  var_dump($r);
+	  echo $r->class;
+	}  
+	public function ds() {
+		echo 'c';
 	}
 }
