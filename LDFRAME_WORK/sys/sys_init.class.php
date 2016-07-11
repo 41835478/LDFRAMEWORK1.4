@@ -14,30 +14,52 @@
 class sys_init{
 	public $param;
 	public $request;
+	public $url;
 	public function sys_init(){
-       $param = isset($_GET['r'])? $_GET['r']: '' ;
+	   $this->url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];	
+	   $param = isset($_GET['r'])? $_GET['r']: '' ;
        if('' == $param) {
-     	  	$param = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['REQUEST_URI']);    	
-       		$param = substr($param, 1,strlen($param));
+     	  	$param = str_replace(HOST, '', $this->url);
+     	  	$param = substr($param, 1,strlen($param));
        }
        $ld = explode('/', $param);
        $this->setControllerParam($ld);
        $this->boot();
 	}
 	public function setControllerParam($param) {
-		$this->param['namespace'] = isset($param[1])?$param[1]:'index';
-		$this->param['ControllerName'] = isset($param[2])?$param[2]:'index';
-		$this->param['fun'] = isset($param[3])?$param[3]:'index';
+		$this->param['namespace'] = !empty($param[1])?$param[1]:'index';
+		$this->param['ControllerName'] = !empty($param[2])?$param[2]:'index';
+		$this->param['fun'] = !empty($param[3])?$param[3]:'index';
 	}
 	public function getControllerName() {
+		$this->url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+		$param = isset($_GET['r'])? $_GET['r']: '' ;
+		if('' == $param) {
+			$param = str_replace(HOST, '', $this->url);
+			$param = substr($param, 1,strlen($param));
+		}
+		$ld = explode('/', $param);
+		$this->setControllerParam($ld);
 		return $this->param['ControllerName'];
 	}
 	//--启动控制器
-	public function boot() {
+	public function boot() {	
 		$Controller = '\\Ld\\'.$this->param['namespace'].'\\controller\\'.$this->param['ControllerName'];
-		$a = new  $Controller();
+ 		if(!class_exists($Controller)) {
+			echo $Controller.'类不存在';
+			exit;
+		} 
+		$Command = new  $Controller();
 		$fun = $this->param['fun'];
-		$a->$fun();
+		if(!method_exists($Command,$fun)){
+			echo '未定义'.$fun.'方法！';
+			exit;
+		}
+		$HTML = $Command->$fun();
+		if($HTML) {
+			echo $HTML;
+			exit;
+		}
 	}
 	public function get() {
 		if(null == $this->request) {

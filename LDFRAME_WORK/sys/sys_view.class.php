@@ -11,7 +11,8 @@
  * Author: lisonglin
  * Id:sys_view.class.php  2016年7月6日  Lisonglin
  */
-class View
+
+class sys_view
 {
 	var $template_dir   = '';
 	var $cache_dir      = '';
