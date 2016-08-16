@@ -13,18 +13,26 @@
  */
 class sys_filter extends FilterIterator {
  	private $filter;  
+    
     public function __construct(Iterator $iterator , $filter )
     {
-        parent::__construct($iterator);
-        $this->filter = $filter;
+    
+    	parent::__construct($iterator);
+        
+    	$this->filter = $filter;
        
     }
     public function accept()
     {
         $filter = $this->getInnerIterator()->current();
+       
         if(strcasecmp($filter,$this->filter) == 0) {
-            return false;
+        
+        	return false;
+        
         }        
+        
         return true;
+    
     }
 }

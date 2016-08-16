@@ -11,6 +11,7 @@
  * Author: lisonglin
  * Id: User.php  2016年7月10日    Lisonglin
  */
+namespace Home\test;
 class User {
 	public $Name;
 	public $Age;

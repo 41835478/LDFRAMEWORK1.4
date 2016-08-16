@@ -11,7 +11,8 @@
  * Author: lisonglin
  * Id:sys_init.class.php  2016年7月6日  Lisonglin
  */
-class sys_init{
+
+class sys_init extends \HttpServer{
 	public $param;
 	public $request;
 	public $url;
@@ -26,7 +27,12 @@ class sys_init{
        $this->setControllerParam($ld);
        $this->boot();
 	}
+	public function param(){
+		
+		
+	}
 	public function setControllerParam($param) {
+		$this->param['grounp'] =  !empty($param[0])?$param[0]:'index';
 		$this->param['namespace'] = !empty($param[1])?$param[1]:'index';
 		$this->param['ControllerName'] = !empty($param[2])?$param[2]:'index';
 		$this->param['fun'] = !empty($param[3])?$param[3]:'index';
@@ -44,108 +50,38 @@ class sys_init{
 	}
 	//--启动控制器
 	public function boot() {	
-		$Controller = '\\Ld\\'.$this->param['namespace'].'\\controller\\'.$this->param['ControllerName'];
+		
+		$servlet_conf_file = $this->param['grounp'].'/Conf/'.SERVLET;
+		
+		$Controller = '\\'.$this->param['grounp'].'\\'.$this->param['namespace'].'\\controller\\'.$this->param['ControllerName'];
+		if(is_file($servlet_conf_file))
+		{
+			$param = str_replace(HOST, '', $this->url);
+			$servlet_class = new ClassPathXmlApplicationContext($servlet_conf_file);
+			$servlet = $servlet_class->toclassPath($servlet_class->getServlet($param));
+			$Controller = $servlet ? $servlet : $Controller;
+		}
+		
+		
+	 	 //--判断控制器是否存在
  		if(!class_exists($Controller)) {
-			echo $Controller.'类不存在';
-			exit;
-		} 
+			throw new ldException("<br/>".$Controller."没有找到该类",11);
+ 			new $Controller();
+ 			exit;
+		}
+		
+			//--创建一个控制器实例
 		$Command = new  $Controller();
+			
 		$fun = $this->param['fun'];
 		if(!method_exists($Command,$fun)){
-			echo '未定义'.$fun.'方法！';
+			throw new ldException("<br/>定义".$fun."方法",11);
 			exit;
 		}
 		$HTML = $Command->$fun();
 		if($HTML) {
 			echo $HTML;
 			exit;
-		}
-	}
-	public function get() {
-		if(null == $this->request) {
-			return $_GET;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
-		}
-	}
-	public function post() {
-		if(null == $this->request) {
-			return $_POST;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
-		}
-	}
-	public function requst() {
-		if(null == $this->request) {
-			return $_POST;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
-		}
-	}
-
-	public function Request($name='',$filter ='') {
-		if (!get_magic_quotes_gpc()) {
-			if(!empty($_GET)) {
-				unset($_REQUEST['r']);
-				$_REQUEST = $this->addslashes_deep($_REQUEST);
-			}		
-			$object = new ArrayObject($_REQUEST);
-			$request = new sys_filter($object->getIterator(),$filter);
-			if('' == $name) {
-				return $request;
-			}
-			if($request->offsetGet($name)) {
-				return $request->offsetGet($name);
-			}
-		}
-	}
-	public function param() {
-		$this->Request();
-	}
-	public function addslashes_deep($value,$htmlspecialchars=false) {
-		
-		if(isset($_GET['r'])) {
-			unset($_GET['r']);
-		}
-		if (empty($value)) {
-			return $value;
-		}else{
-			if(is_array($value)){
-				foreach($value as $key => $v){
-					unset($value[$key]);
-					if(true == $htmlspecialchars){
-						$key = addslashes(htmlspecialchars($key));
-					}
-					else{
-						$key = addslashes($key);
-					}
-	
-					if(is_array($v)){
-						$value[$key] = addslashes_deep($v);
-					}else{
-						if(true == $htmlspecialchars){
-							$value[$key] = addslashes(htmlspecialchars($v));
-						}
-						else{
-							$value[$key] = addslashes($v);
-						}
-					}
-				}
-			}else{
-				if(true == $htmlspecialchars){
-					$value = addslashes(htmlspecialchars($value));
-				}else{
-					$value = addslashes($value);
-				}
-			}
-	
-			return $value;
 		}
 	}
 }

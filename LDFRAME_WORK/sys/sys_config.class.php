@@ -9,5 +9,26 @@
  * 使用；不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
  * Author: lisonglin
- * Id: db.class.php  2016年7月11日    Lisonglin
+ * Id: sys_config.class.php  2016年7月16日    Lisonglin
  */
+class sys_config {
+	
+	static function Config($files = '') {
+		if('' == $files){
+			return require_once  FRAMEWORK_DIR.'../Home/Conf/database.php';
+	
+		}else {
+			return require_once FRAMEWORK_DIR.'../Home/Conf/'.$files;
+		}
+	}
+	static function get($option = '',$file = '') {
+		$Config = self::Config();
+		if('' == $option) {
+			return $Config;
+		}else {
+			$option = trim($option);
+			$values = isset($Config[$option])? $Config[$option] : '';
+			return $values;
+		}
+	}
+}

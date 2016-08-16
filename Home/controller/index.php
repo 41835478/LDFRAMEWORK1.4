@@ -11,15 +11,18 @@
  * Author: lisonglin
  * Id: index.php  2016年7月11日    Lisonglin
  */
-namespace Ld\index\controller;
+namespace Home\index\controller;
 use ld\controller\Controller;
+use Model;
+use Home\model\User\User;
 class index extends Controller {
 	public function index() {
-		$p = new \ClassPathXmlApplicationContext(FRAMEWORK_DIR.'../Home/Conf/spring.xml');
-		$beans = $p->getBean('user');
-	    echo $beans->getName();
-	    echo $beans->getAge();
-		$this->assign('Test','<h1>这是新的框架了</h1>');
+	    $res =  Model::table('msv_users AS b')->select();	   	 
+	   	print_r($res);
+	    exit;
+		$a = new User();
+		$a->addUser();
+	   	$this->assign('Test','<h1>这是新的框架了</h1>');
 		return $this->fetch('/index.html');
 	}
 }

@@ -96,7 +96,6 @@ class sys_view
 	{
 		$this->_seterror++;
 		error_reporting(E_ALL ^ E_NOTICE);
-
 		$this->_checkfile = false;
 		$out = $this->fetch($filename, $cache_id);
 

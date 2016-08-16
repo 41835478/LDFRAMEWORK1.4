@@ -12,8 +12,9 @@
  * Id: User.php  2016年7月11日    Lisonglin
  */
 //---模型
-class User extends Model {
-	public function addUser(User $user) {
-		
+namespace Home\model\User;
+class User{
+	public function addUser() {
+		echo '----';
 	}
 }
