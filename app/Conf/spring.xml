@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- php SPRING 强大的注入类管理，切面化编程-->
+<beans>
+	<bean id = 'user' class='User' classPath='app.test'>
+		<property name="Name" value="张三"/>
+		<property name="Age" value="男"/>	
+	</bean>
+</beans> 
