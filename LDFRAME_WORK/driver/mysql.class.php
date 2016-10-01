@@ -35,24 +35,23 @@ class Mysql {
 	}
 	public function loadConfig($Config = '') {
 		
-		$this->host = sys_config::get('DBHOST');
+		$this->host =  sys_config::get("DBHOST");
+		$this->database = sys_config::get("DBNAME");
 		
-		$this->database = sys_config::get('DBNAME');
+		$this->username = sys_config::get("DBUSER");
 		
-		$this->username = sys_config::get('DBUSER');
-		
-		$this->password = sys_config::get('DBPASSWORD');
+		$this->password =  sys_config::get("DBPASSWORD");
 	
 		$this->constr = 'mysql:host='.$this->host.';dbname='.$this->database;		
 	
 	}
 	
 	public function connection($constr = '') {
-		
+	
 		$this->loadConfig();		
 	
 		$this->con = new \PDO($this->constr,$this->username,$this->password);
-		
+    
 		return $this->con;
 	}
 }

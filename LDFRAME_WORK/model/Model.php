@@ -5,7 +5,7 @@ class Model extends sql{
 		$mysql = new Mysql();   
 		self::$sql = new sql();
 		self::$sql->tableName = $table;
-		self::$sql->pdo = $mysql->connection();
+		self::$sql->pdo = $mysql;
 		return self::$sql;
 	}
 }

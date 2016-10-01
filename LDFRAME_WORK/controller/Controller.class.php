@@ -1,7 +1,8 @@
 <?php
 namespace  ld\controller;
 use ld\controller\view\View;
-class Controller extends \HttpServer{
+use ld\lib\HttpServer;
+class Controller extends HttpServer{
 	public $view;
 	public function __construct() {
 		$this->view = new View();

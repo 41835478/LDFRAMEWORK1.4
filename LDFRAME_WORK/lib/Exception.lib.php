@@ -11,8 +11,9 @@
  * Author: lisonglin
  * Exception.lib.php} 2016年8月16日}  Lisonglin
  */
+namespace ld\lib;
 use ld\controller\view\View;
-class ldException extends Exception
+class ldException extends \Exception
 {
 	public function __construct($message, $code = 0)
 	{

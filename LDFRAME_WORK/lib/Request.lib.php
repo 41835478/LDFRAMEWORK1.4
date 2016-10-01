@@ -12,65 +12,99 @@
  * Request.lib.php} 2016年8月16日}  Lisonglin
  */
 
-class Request extends sys_filter
+namespace ld\lib;
+class Request
 {
+	private $requst;
+	private $server;
+	public $ip;
+	private $get;
+	private $post;
+	private $file;
+	public function __construct(){
+		if(isset($_REQUEST['r'])) {
+			unset($_REQUEST['r']);
+		}
 
-	public function get($name = '') {
+		$this->param();
+	
+	}
+	public function getIP() { 
+		if (getenv('HTTP_CLIENT_IP')) { 
+			$ip = getenv('HTTP_CLIENT_IP'); 
+		} 
+		elseif (getenv('HTTP_X_FORWARDED_FOR')) { 
+			$ip = getenv('HTTP_X_FORWARDED_FOR'); 
+		} 
+		elseif (getenv('HTTP_X_FORWARDED')) { 
+			$ip = getenv('HTTP_X_FORWARDED'); 
+		} 
+		elseif (getenv('HTTP_FORWARDED_FOR')) { 
+			$ip = getenv('HTTP_FORWARDED_FOR'); 
 		
-		
-		if('' == $name ) 
+		} 
+		elseif (getenv('HTTP_FORWARDED')) { 
+			$ip = getenv('HTTP_FORWARDED'); 
+		} 
+		else { 
+			$ip = $_SERVER['REMOTE_ADDR']; 
+		} 
+		return $ip; 
+	} 
+	public function get($v = '')
+	{
+		if('' != $v)
 		{
-			return $_GET;
+			return isset($this->get[$v])? $this->get[$v]: '';
 		}
-		return $_GET[$name];
-		/* if(null == $this->request) {
-			return $_GET;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
-		} */
-	}
-	public function post() {
-		if(null == $this->request) {
-			return $_POST;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
+		$get = new \stdClass();
+		foreach($this->get as $key => $val)
+		{
+			$get->$key = $val;
 		}
+		return $get;
 	}
-	public function requst() {
-		if(null == $this->request) {
-			return $_POST;
-		}else if(null == $this->request) {
-			return '';
-		}else {
-			return $this->request;
+	public function post($v = '')
+	{
+		$post = new \stdClass();
+		
+		if('' != $v)
+		{
+			return isset($this->post[$v])? $this->post[$v] :'';
 		}
+		foreach($this->post as $key => $val)
+		{
+			$post->$key = $val;
+		}
+		return $post;
 	}
-
-	public function Request($name='',$filter ='') {
-		if (!get_magic_quotes_gpc()) {
-			if(!empty($_GET)) {
-				unset($_REQUEST['r']);
-				$_REQUEST = $this->addslashes_deep($_REQUEST);
-			}		
-			$object = new ArrayObject($_REQUEST);
-			$request = new sys_filter($object->getIterator(),$filter);
-			if('' == $name) {
-				return $request;
-			}
-			if($request->offsetGet($name)) {
-				return $request->offsetGet($name);
-			}
+	public function getServer()
+	{
+		
+	}
+	public function getfile()
+	{
+		
+	}
+	private function param()
+	{
+		
+		$this->requst = $this->addslashes_deep($_REQUEST);	
+		$this->get = $this->addslashes_deep($_GET);
+		$this->post = $this->addslashes_deep($_POST);
+		$this->file = $this->addslashes_deep($_FILES);
+		$this->ip = $this->getIP();
+		foreach($this->requst as $key =>$val)
+		{
+			$this->set($key,$val);
 		}
 	}
-	public function param() {
-		$this->Request();
+	public function set($key,$value)
+	{
+		$this->$key = $value;
 	}
 	public function addslashes_deep($value,$htmlspecialchars=false) {
-		
+	
 		if(isset($_GET['r'])) {
 			unset($_GET['r']);
 		}
@@ -88,10 +122,10 @@ class Request extends sys_filter
 					}
 	
 					if(is_array($v)){
-						 throw new \ldException('参数不能为数组',1);
-						 $value[$key] = addslashes_deep($v);
+						throw new \ldException('参数不能为数组',1);
+						$value[$key] = addslashes_deep($v);
 							
-						}else{
+					}else{
 						if(true == $htmlspecialchars){
 							$value[$key] = addslashes(htmlspecialchars($v));
 						}

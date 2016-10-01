@@ -12,7 +12,10 @@
  * Id:sys_init.class.php  2016年7月6日  Lisonglin
  */
 
-class sys_init extends \HttpServer{
+use ld\lib\HttpServer;
+use ld\lib\Request;
+use ld\lib\ldException;
+class sys_init extends HttpServer{
 	public $param;
 	public $request;
 	public $url;
@@ -52,33 +55,37 @@ class sys_init extends \HttpServer{
 	public function boot() {	
 		
 		$servlet_conf_file = $this->param['grounp'].'/Conf/'.SERVLET;
-		
+	
 		$Controller = '\\'.$this->param['grounp'].'\\'.$this->param['namespace'].'\\controller\\'.$this->param['ControllerName'];
-		if(is_file($servlet_conf_file))
+
+ 		if(is_file($servlet_conf_file))
 		{
+
 			$param = str_replace(HOST, '', $this->url);
 			$servlet_class = new ClassPathXmlApplicationContext($servlet_conf_file);
 			$servlet = $servlet_class->toclassPath($servlet_class->getServlet($param));
 			$Controller = $servlet ? $servlet : $Controller;
-		}
+		} 
 		
 		
-	 	 //--判断控制器是否存在
+	 	//--判断控制器是否存在
  		if(!class_exists($Controller)) {
+ 		
 			throw new ldException("<br/>".$Controller."没有找到该类",11);
  			new $Controller();
  			exit;
 		}
 		
-			//--创建一个控制器实例
+		//--创建一个控制器实例
 		$Command = new  $Controller();
-			
+		
 		$fun = $this->param['fun'];
 		if(!method_exists($Command,$fun)){
 			throw new ldException("<br/>定义".$fun."方法",11);
 			exit;
 		}
-		$HTML = $Command->$fun();
+		$request = new Request();
+		$HTML = $Command->$fun($request);
 		if($HTML) {
 			echo $HTML;
 			exit;

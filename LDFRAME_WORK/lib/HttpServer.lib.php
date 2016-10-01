@@ -1,13 +1,12 @@
 <?php
-class HttpServer extends sys_filter
+namespace ld\lib;
+class HttpServer extends \sys_filter
 {
-	
+
 	public $response;
 	public $requst;
 	public function __construct()
 	{
-		$this->response = new Request();
+		//$this->response = new Request();
 	}
-	
-	
 }

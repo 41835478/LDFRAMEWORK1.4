@@ -12,13 +12,20 @@
  * Id: sys_config.class.php  2016年7月16日    Lisonglin
  */
 class sys_config {
-	
+	//--计算默认配置目录
+	static function configPaht() {
+		if(is_file(FRAMEWORK_DIR.'../'.GROUNP_NAME.'/Conf/database.php'))
+		{
+			return FRAMEWORK_DIR.'../'.GROUNP_NAME.'/Conf/database.php';
+		} else {
+			return FRAMEWORK_DIR.'../Conf/database.php';
+		}
+	}
 	static function Config($files = '') {
 		if('' == $files){
-			return require_once  FRAMEWORK_DIR.'../Home/Conf/database.php';
-	
+			return include  self::configPaht();
 		}else {
-			return require_once FRAMEWORK_DIR.'../Home/Conf/'.$files;
+			return include  self::configPaht();
 		}
 	}
 	static function get($option = '',$file = '') {

@@ -119,9 +119,8 @@ class sql{
 		
 			$this->sqlexcute ='SELECT ' .$this->colum . ' FROM '.$this->tableName.$this->lefttable.' IN '. $this->in.$this->limit;
 		}
-			
-		$this->stmt = $this->pdo->prepare($this->sqlexcute);
-	
+		$this->stmt = $this->pdo->connection()->prepare($this->sqlexcute);
+		
 		$this->stmt->execute();
 		
 		$this->clearSql();

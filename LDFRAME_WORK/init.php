@@ -1,11 +1,10 @@
 <?php 
-
-
-
 //--调试模式
 defined('DEBUG') 		or define('DEBUG', 1);
 
 @ini_set('display_errors', DEBUG);
+
+define('tarce',false);
 
 //--AppName
 defined('APP_NAME')     or define('APP_NAME','application');
@@ -48,10 +47,14 @@ defined('CACHE_NAME') or define('CACHE_NAME','RunTime');
 
 
 require FRAMEWORK_DIR.'factory/factory.class.php';
+use ld\lib\ldException;
 try{
 	factory::run();
-}catch(ldException $e)
-{
-	$e->customFunction();
+}catch(ldException $e){
+	if(tarce === true) {
+		$e->customFunction();
+	}else {
+		
+	}
 }
 ?>
